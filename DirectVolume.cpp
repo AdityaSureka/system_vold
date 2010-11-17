@@ -77,6 +77,14 @@ dev_t DirectVolume::getDiskDevice() {
 
 dev_t DirectVolume::getShareDevice() {
     if (mPartIdx != -1) {
+#ifdef VOLD_DISC_HAS_MULTIPLE_MAJORS
+        int major = getMajorNumberForBadPartition(mPartIdx);
+        if(major != -1) {
+            SLOGE("getShareDevice() returning correct major: %d, minor: %d", major, mPartMinors[mPartIdx - 1]);
+            return MKDEV(major, mPartMinors[mPartIdx - 1]);
+        }
+        else
+#endif
         return MKDEV(mDiskMajor, mPartIdx);
     } else {
         return MKDEV(mDiskMajor, mDiskMinor);
@@ -224,8 +232,8 @@ void DirectVolume::handlePartitionAdded(const char *devpath, NetlinkEvent *evt) 
 #ifdef PARTITION_DEBUG
     SLOGD("Dv:partAdd: part_num = %d, minor = %d\n", part_num, minor);
 #endif
-    if (part_num >= MAX_PARTITIONS) {
-        SLOGE("Dv:partAdd: ignoring part_num = %d (max: %d)\n", part_num, MAX_PARTITIONS-1);
+    if (part_num > MAX_PARTITIONS) {
+        SLOGE("Dv:partAdd: ignoring part_num = %d (max: %d)\n", part_num, MAX_PARTITIONS);
     } else {
         mPartMinors[part_num -1] = minor;
     }
