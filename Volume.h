@@ -109,6 +109,7 @@ private:
     int mountAsecExternal();
     int doUnmount(const char *path, bool force);
     int extractMetadata(const char* devicePath);
+    int doFuseMount(const char *src, const char *dst);
 };
 
 typedef android::List<Volume *> VolumeCollection;
