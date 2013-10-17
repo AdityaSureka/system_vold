@@ -53,7 +53,6 @@ private:
     };
 
     android::List<ValuePair> badPartitions;
-#endif
 
 public:
     DirectVolume(VolumeManager *vm, const fstab_rec* rec, int flags);
